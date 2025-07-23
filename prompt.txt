@@ -5,7 +5,8 @@ Return the result in this format:
 2. Code Patterns / Gotchas Mentioned
 3. Things To Try Myself (small projects)
 4. Related Concepts I Should Look Into
-5. If the post is in a language other than Python, give me a brief equivalent in Python (no full rewrite—just concepts).
+5. A paragraph on each topic of the related concepts I should look into
+6. If the post is in a language other than Python, give me a brief equivalent in Python (no full rewrite—just concepts).
 
 Be concise, use clear language, and assume I already know the basics. Focus on things that would help an intermediate-to-advanced Python developer grow faster.
 
