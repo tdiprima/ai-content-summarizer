@@ -37,7 +37,7 @@ def summarize_with_prompt(article_text: str) -> str:
         response = litellm.completion(
             model="gpt-4o",
             messages=[{"role": "user", "content": full_prompt}],
-            temperature=0.7
+            temperature=0.5
         )
         
         return response['choices'][0]['message']['content']

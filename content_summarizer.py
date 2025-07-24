@@ -4,10 +4,9 @@ import requests
 import litellm
 import os
 
-PROMPT = """Create an engaging summary of this article that preserves the author's main point.
-Style: Write like you're explaining it to a smart friend over coffee - clear, lively, but accurate.
-If the topic is dry, add energy through word choice and pacing, not by inventing new content.
-Length: 2-3 paragraphs that capture the essence.
+PROMPT = """Summarize the following article, but be sure to capture details.
+For example, what tool or tools is the author exploring?
+Write a 2-3 paragraph summary.
 
 Here's the content:
 {content}"""
@@ -42,7 +41,7 @@ def summarize_with_prompt(article_text: str) -> str:
         response = litellm.completion(
             model="gpt-4o",
             messages=[{"role": "user", "content": full_prompt}],
-            temperature=0.7
+            temperature=0.5
         )
         
         return response['choices'][0]['message']['content']
@@ -82,7 +81,6 @@ def process_urls_from_file(urls_file: str, output_dir: str = "summaries1") -> No
             with open(filepath, "w") as f:
                 f.write(f"**Source:** {url}\n\n")
                 f.write(summary)
-                f.write("\n\n<br>\n")
             
             print(f"  Saved summary to {filepath}")
     
