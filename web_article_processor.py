@@ -1,8 +1,8 @@
+# Web article processor for extracting and summarizing web content using AI
 from bs4 import BeautifulSoup
 import requests
 import litellm
 import os
-from typing import List
 
 
 def extract_article_text(url: str) -> str:
@@ -37,7 +37,7 @@ def summarize_with_prompt(article_text: str) -> str:
         response = litellm.completion(
             model="gpt-4o",
             messages=[{"role": "user", "content": full_prompt}],
-            temperature=0.2
+            temperature=0.7
         )
         
         return response['choices'][0]['message']['content']
@@ -77,6 +77,7 @@ def process_urls_from_file(urls_file: str, output_dir: str = "summaries") -> Non
             with open(filepath, "w") as f:
                 f.write(f"# Summary for:\n{url}\n\n")
                 f.write(summary)
+                f.write("\n\n<br>\n")
             
             print(f"  Saved summary to {filepath}")
     
