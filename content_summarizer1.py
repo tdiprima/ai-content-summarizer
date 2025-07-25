@@ -4,9 +4,17 @@ import requests
 import litellm
 import os
 
-PROMPT = """Summarize the following article, but be sure to capture details.
-For example, what tool or tools is the author exploring?
-Write a 2-3 paragraph summary.
+# PROMPT = """Summarize the following article, but be sure to capture details.
+# For example, what tool or tools is the author exploring?
+# Write a 2-3 paragraph summary.
+
+# Here's the content:
+# {content}"""
+
+PROMPT = """Create an engaging summary of this article that preserves the author's main point.
+Style: Write like you're explaining it to a smart friend over coffee - clear, lively, but accurate.
+If the topic is dry, add energy through word choice and pacing, not by inventing new content.
+Length: 2-3 paragraphs that capture the essence.
 
 Here's the content:
 {content}"""
