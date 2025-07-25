@@ -29,11 +29,10 @@ Some code adapted from the article  [*"This ChatGPT Prompt Was So Good, I Saved 
 ## Usage
 
 1. Create a `urls.txt` file with URLs to process (one per line)
-2. Run the script(s):
+2. Run the script:
 
    ```bash
    python content_summarizer.py
-   python web_article_processor.py
    ```
 
 3. Summaries will be saved in the `summaries/` directory

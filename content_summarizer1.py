@@ -1,8 +1,15 @@
-# Web article processor for extracting and summarizing web content using AI
+# Content summarizer for web articles with specialized prompting
 from bs4 import BeautifulSoup
 import requests
 import litellm
 import os
+
+PROMPT = """Summarize the following article, but be sure to capture details.
+For example, what tool or tools is the author exploring?
+Write a 2-3 paragraph summary.
+
+Here's the content:
+{content}"""
 
 
 def extract_article_text(url: str) -> str:
@@ -27,12 +34,9 @@ def extract_article_text(url: str) -> str:
 
 
 def summarize_with_prompt(article_text: str) -> str:
-    """Send article text to ChatGPT for summarization using the prompt template."""
+    """Send article text to AI for summarization."""
     try:
-        with open("prompt.txt", "r") as f:
-            prompt_template = f.read()
-        
-        full_prompt = prompt_template.replace("{{ insert blog post or raw dev thread here }}", article_text)
+        full_prompt = PROMPT.format(content=article_text)
         
         response = litellm.completion(
             model="gpt-4o",
@@ -46,14 +50,14 @@ def summarize_with_prompt(article_text: str) -> str:
         return ""
 
 
-def process_urls_from_file(urls_file: str, output_dir: str = "summaries") -> None:
+def process_urls_from_file(urls_file: str, output_dir: str = "summaries1") -> None:
     """Process URLs from a text file and save summaries as markdown files."""
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
     try:
         with open(urls_file, "r") as f:
-            urls = [line.strip() for line in f if line.strip()]
+            urls = [line.strip() for line in f if line.strip() and not line.startswith("#")]
         
         for i, url in enumerate(urls, 1):
             print(f"Processing URL {i}/{len(urls)}: {url}")
@@ -75,9 +79,8 @@ def process_urls_from_file(urls_file: str, output_dir: str = "summaries") -> Non
             filepath = os.path.join(output_dir, filename)
             
             with open(filepath, "w") as f:
-                f.write(f"# Summary for:\n{url}\n\n")
+                f.write(f"**Source:** {url}\n\n")
                 f.write(summary)
-                f.write("\n\n<br>\n")
             
             print(f"  Saved summary to {filepath}")
     
