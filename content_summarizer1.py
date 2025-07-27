@@ -15,6 +15,7 @@ PROMPT = """Create an engaging summary of this article that preserves the author
 Style: Write like you're explaining it to a smart friend over coffee - clear, lively, but accurate.
 If the topic is dry, add energy through word choice and pacing, not by inventing new content.
 Length: 2-3 paragraphs that capture the essence.
+Finally, in 1 short paragraph, explain if you think this article's claims are correct.
 
 Here's the content:
 {content}"""
