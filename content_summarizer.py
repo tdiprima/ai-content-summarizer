@@ -1,8 +1,24 @@
-# Web article processor for extracting and summarizing web content using AI
+"""
+Web article processor for extracting and summarizing web/text file content using AI
+
+# Default web mode (uses urls.txt)
+python content_summarizer.py
+
+# Web mode with custom files
+python content_summarizer.py --mode web --input my_urls.txt --output my_summaries/
+
+# Text file mode (default input.txt)
+python content_summarizer.py --mode text
+
+# Text file with custom input/output
+python content_summarizer.py --mode text --input article.txt --output article_summary.md
+
+"""
 from bs4 import BeautifulSoup
 import requests
 import litellm
 import os
+import argparse
 
 
 def extract_article_text(url: str) -> str:
@@ -23,6 +39,16 @@ def extract_article_text(url: str) -> str:
         return article_text.strip()
     except Exception as e:
         print(f"Error extracting content from {url}: {e}")
+        return ""
+
+
+def read_text_file(filepath: str) -> str:
+    """Read text content from a file."""
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            return f.read().strip()
+    except Exception as e:
+        print(f"Error reading file {filepath}: {e}")
         return ""
 
 
@@ -53,7 +79,7 @@ def process_urls_from_file(urls_file: str, output_dir: str = "summaries") -> Non
     
     try:
         with open(urls_file, "r") as f:
-            urls = [line.strip() for line in f if line.strip()]
+            urls = [line.strip() for line in f if line.strip() and not line.startswith("#")]
         
         for i, url in enumerate(urls, 1):
             print(f"Processing URL {i}/{len(urls)}: {url}")
@@ -87,20 +113,80 @@ def process_urls_from_file(urls_file: str, output_dir: str = "summaries") -> Non
         print(f"Error processing URLs: {e}")
 
 
-def main():
-    """Main function to run the content summarizer."""
-    urls_file = "urls.txt"
+def process_text_file(text_file: str, output_file: str = None) -> None:
+    """Process a single text file and save the summary."""
+    print(f"Processing text file: {text_file}")
     
-    if not os.path.exists(urls_file):
-        print(f"Creating sample {urls_file} file...")
-        with open(urls_file, "w") as f:
-            f.write("# Add URLs here, one per line\n")
-            f.write("# Example:\n")
-            f.write("# https://example.com/blog-post\n")
-        print(f"Please add URLs to {urls_file} and run again.")
+    # Read content
+    article_text = read_text_file(text_file)
+    if not article_text:
+        print(f"Error: No content found in {text_file}")
         return
     
-    process_urls_from_file(urls_file)
+    # Summarize
+    summary = summarize_with_prompt(article_text)
+    if not summary:
+        print(f"Error: Could not generate summary for {text_file}")
+        return
+    
+    # Determine output filename
+    if output_file is None:
+        base_name = os.path.splitext(text_file)[0]
+        output_file = f"{base_name}_summary.md"
+    
+    # Save summary
+    with open(output_file, "w") as f:
+        f.write(f"# Summary for: {text_file}\n\n")
+        f.write(summary)
+        f.write("\n")
+    
+    print(f"Saved summary to {output_file}")
+
+
+def main():
+    """Main function to run the content summarizer."""
+    parser = argparse.ArgumentParser(description="Summarize web articles or text files using AI")
+    parser.add_argument("--mode", choices=["web", "text"], default="web",
+                       help="Processing mode: 'web' for URLs or 'text' for text file")
+    parser.add_argument("--input", default=None,
+                       help="Input file: URLs file for web mode, text file for text mode")
+    parser.add_argument("--output", default=None,
+                       help="Output location: directory for web mode, file for text mode")
+    
+    args = parser.parse_args()
+    
+    # Check if prompt.txt exists
+    if not os.path.exists("prompt.txt"):
+        print("Error: prompt.txt not found. Please create it with your summarization prompt.")
+        print("Example content: 'Please summarize the following content:\n\n{{ insert blog post or raw dev thread here }}'")
+        return
+    
+    if args.mode == "web":
+        # Web mode: process URLs
+        urls_file = args.input or "urls.txt"
+        output_dir = args.output or "summaries"
+        
+        if not os.path.exists(urls_file):
+            print(f"Creating sample {urls_file} file...")
+            with open(urls_file, "w") as f:
+                f.write("# Add URLs here, one per line\n")
+                f.write("# Example:\n")
+                f.write("# https://example.com/blog-post\n")
+            print(f"Please add URLs to {urls_file} and run again.")
+            return
+        
+        process_urls_from_file(urls_file, output_dir)
+    
+    else:
+        # Text mode: process single text file
+        text_file = args.input or "input.txt"
+        
+        if not os.path.exists(text_file):
+            print(f"Error: Input file {text_file} not found.")
+            print("Please specify a text file using --input or create input.txt")
+            return
+        
+        process_text_file(text_file, args.output)
 
 
 if __name__ == "__main__":
