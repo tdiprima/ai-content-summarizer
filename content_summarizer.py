@@ -53,7 +53,7 @@ def read_text_file(filepath: str) -> str:
 
 
 def summarize_with_prompt(article_text: str) -> str:
-    """Send article text to ChatGPT for summarization using the prompt template."""
+    """Send article text to AI for summarization using the prompt template."""
     try:
         with open("prompt.txt", "r") as f:
             prompt_template = f.read()
@@ -61,7 +61,8 @@ def summarize_with_prompt(article_text: str) -> str:
         full_prompt = prompt_template.replace("{{ insert blog post or raw dev thread here }}", article_text)
         
         response = litellm.completion(
-            model="gpt-4o",
+            # model="gpt-4o",
+            model="xai/grok-4-0709",
             messages=[{"role": "user", "content": full_prompt}],
             temperature=0.5
         )
@@ -131,8 +132,9 @@ def process_text_file(text_file: str, output_file: str = None) -> None:
     
     # Determine output filename
     if output_file is None:
-        base_name = os.path.splitext(text_file)[0]
-        output_file = f"{base_name}_summary.md"
+        output_file = "output.md"
+        # base_name = os.path.splitext(text_file)[0]
+        # output_file = f"{base_name}_summary.md"
     
     # Save summary
     with open(output_file, "w") as f:

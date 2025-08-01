@@ -2,6 +2,7 @@ summaries/
 summaries1/
 urls.txt
 input.txt
+output.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

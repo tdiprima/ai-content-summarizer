@@ -2,12 +2,12 @@
 
 A Python tool that extracts content from web pages (or a text file) and summarizes it using ChatGPT with a specialized prompt for developers.
 
-Some code adapted from the article [*"This ChatGPT Prompt Was So Good, I Saved It in 3 Places"*](https://medium.com/gitconnected/this-chatgpt-prompt-was-so-good-i-saved-it-in-3-places-6910bf07f3d2) by Maria Ali.
+Based on code from Maria Ali's article [*"This ChatGPT Prompt Was So Good, I Saved It in 3 Places"*](https://medium.com/gitconnected/this-chatgpt-prompt-was-so-good-i-saved-it-in-3-places-6910bf07f3d2), with significant modifications.
 
 ## Features
 
 - Extracts readable text from web pages using `BeautifulSoup`
-- Uses `litellm` for ChatGPT integration
+- Uses [**`litellm`**](https://www.litellm.ai/) for ChatGPT integration
 - Processes multiple URLs from a text file
 - Saves summaries as markdown files
 - Specialized prompt for technical content analysis
